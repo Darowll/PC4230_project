@@ -26,8 +26,8 @@ dt = T/M;                       % Time step
 H0 = zeros(M);                 % Hamiltonian matrix
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Parameters to vary 
-A = 1;      %Driving amplitude
-omega = 1;  %Driving Frequency
+A = 3;      %Driving amplitude
+omega = 1/pi;  %Driving Frequency
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %   Define vectors to store split step propagators in position and
 %   momentum space
@@ -50,8 +50,8 @@ hold on
 psi_0=psi;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define the first excited state (Hermite polynomial H1(x))
-psi_excited = hermiteH(1,X); % First excited state
-psi_excited = psi_excited/sqrt(sum(abs(psi_excited).^2)) %Normalise Excited state
+psi_excited_prep = hermiteH(1,(X(1:N)-X0))*psiprep; % First excited state
+psi_excited = psi_excited_prep/sqrt(sum(abs(psi_excited_prep).^2)); %Normalise Excited state
 
 % Initialize transition probability storage
 P_1 = zeros(1, M); % Transition probability at each time step
@@ -83,7 +83,6 @@ psi=psi_0; %final state updated
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plotting the transition probability as a function of time
 time = (0:M-1) * dt;
-figure;
 plot(time, P_1, 'LineWidth', 2);
 xlabel('Time');
 ylabel('Transition Probability');
