@@ -51,6 +51,7 @@ psi_0=psi;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Define the first excited state (Hermite polynomial H1(x))
 psi_excited = hermiteH(1,X); % First excited state
+psi_excited = psi_excited/sqrt(sum(abs(psi_excited).^2)) %Normalise Excited state
 
 % Initialize transition probability storage
 P_1 = zeros(1, M); % Transition probability at each time step
