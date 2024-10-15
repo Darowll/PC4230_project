@@ -7,7 +7,6 @@
 % Unit of energy: hbar*omega, where h_bar is the Planck constant and
 %   omega is the frequency of the trap
 %   Unit of length: l=sqrt(h_bar/(m*omega)), where sqrt(...) is the square
-%  mo
 %   root function and m is the mass of the particle
 %   Unit of momentum: hbar/l
 %    energy unit: hbar\omega,  Hamiltonian --> dimensionless
