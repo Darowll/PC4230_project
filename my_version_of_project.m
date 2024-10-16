@@ -11,7 +11,7 @@ L = b-a;
 N = 2048;
 X = a+L*(0:N-1)/N;                % Dimensionless coordinates
 P = (2*pi/L)*[0:N/2-1,-N/2:-1];   % Dimensionless momentum
-T = 8;                            % Time duration of the evolution, can adjust this to see the difference between fast and slow move
+T = 20;                            % Time duration of the evolution, can adjust this to see the difference between fast and slow move
 M = 10^3;                         % Total No. of steps in the evolution
 dt = T/M;                         % Time step
 Binsize=25;                       % This is to control every Binsize steps, we take snapshots
@@ -34,8 +34,8 @@ DEL0 = 1;                       % Width of the Gaussian
 % Defining an initial state using hermite polynomials 
 Poly_0 = hermiteH(0,X);                                  % 0 for ground state
 V_INI_TEMP = Poly_0.*exp(-(X-X0).^2/(2*DEL0^2));
-V_INI = V_INI_TEMP / sqrt(V_INI_TEMP * V_INI_TEMP');
-
+%V_INI = V_INI_TEMP / sqrt(V_INI_TEMP * V_INI_TEMP');
+V_INI = V_INI_TEMP / sqrt(trapz(X, abs(V_INI_TEMP).^2));
 
 % Defining the excited state using Hermite Polynomials
 Poly_ex = hermiteH(1,X);                                 % ex for excited state
@@ -79,13 +79,18 @@ for m = 1:M
        
         % Projecting
 
-        proj_0 = trapz(X, conj(psi_0) .* VE_FIN_store);      %project onto the ground state
+        Poly_0 = hermiteH(0, X);                          % Redefine the ground state
+        psi_0 = Poly_0 .* exp(-(X-X0).^2/(2*DEL0^2));     % Ground state wavefunction
+        psi_0 = psi_0 / sqrt(trapz(X, abs(psi_0).^2));    % Normalize
+        proj_0 = trapz(X, conj(psi_0) .* VE_FIN_store);   % Projection onto ground state
+
+                 
         proj_ex = trapz(X, conj(psi_ex) .* VE_FIN_store);    %project onto the ground state
 
         % Store the transition probabilities 
 
-        prob_0(m) = abs(proj_0)^2;
-        prob_ex(m) = abs(proj_ex)^2;
+        prob_0(m/Binsize) = abs(proj_0)^2;
+        prob_ex(m/Binsize) = abs(proj_ex)^2;
     end
 end
 
