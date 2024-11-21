@@ -11,14 +11,14 @@ L = b-a;
 N = 2048;
 X = a+L*(0:N-1)/N;                     % Dimensionless coordinates
 P = (2*pi/L)*[0:N/2-1,-N/2:-1];        % Dimensionless momentum
-T = 20*pi;                                % Time duration of the evolution, can adjust this to see the difference between fast and slow move
+T = 100*pi;                                % Time duration of the evolution, can adjust this to see the difference between fast and slow move
 M = 10^3;                              % Total No. of steps in the evolution
 dt = T/M;                              % Time step
 Binsize=25;                            % This is to control every Binsize steps, we take snapshots
 
 %defining the parameters thae question wants us to investigate
-A = 0.01;
-omega = 0.9;
+A = 0.1;
+omega = 0.5;
 
 %defining the propogators
 UT = exp(-1i*(P.^2/2)*dt);             % One-step propagator in momentum space

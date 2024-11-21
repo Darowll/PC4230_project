@@ -14,19 +14,19 @@
 %%   time dimensionless: omega*t    i d/dt | >= dimension H |>
 %    dimensionless time = 2pi. one classical period
 %--------------------------------------------------------------------------
-a = -20;                       % Left end point 
-b = +20;                       % Right end point 
+a = -10;                       % Left end point 
+b = +10;                       % Right end point 
 L = b-a;                        % Width of the space
 N = 512;                       % No. of cells
 X = a+L*(0:N-1)/N;                % Dimensionless coordinates
 P = (2*pi/L)*[0:N/2-1,-N/2:-1]; % Dimensionless momentum
-T=5*pi;                         % Time duration of the evolution
-M = 10^3;                     % Total No. of steps in the evolution
+T= 10*pi;                         % Time duration of the evolution
+M = 10^4;                     % Total No. of steps in the evolution
 dt = T/M;                       % Time step
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Parameters to vary 
-A = 1;      %Driving amplitude
-omega = 5;  %Driving Frequency
+A = 0.001;      %Driving amplitude
+omega = 1;  %Driving Frequency
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %   Define vectors to store split step propagators in position and
@@ -40,7 +40,7 @@ UT = exp(-1i*(P.^2/2)*dt);       % One-setp propagator in momentum space
 %   Define the initial state
 %   As a typical example, we consider the initial state to be a Gaussian
 %   wavepacket located at X0
-X0=4.0;
+X0=0.0;
 sigma=1.0;  % sigma is the width of the initial wavepacket
 %psiprep=exp(-(X(1:N-1)-X0).^2/0.5)  squeezed
 psiprep=exp(-(X(1:N)-X0).^2/(2*sigma^2));  %Gaussian state
@@ -52,24 +52,26 @@ psi_0=psi;
 
 %Creating figure and initializing gif file
 figure;
-set(gcf,'position',[500 500 1000 500])
+set(gcf,'position',[500 500 1000 1000])
 h1 = animatedline;
 h1.Color = [1 0 1];
 h2 = animatedline;
 h2.Color = [0 0 1];
-axis([a b 0 0.2]);
+axis([a b 0 0.6]);
+grid on
 
 % Add a legend to label both lines
 legend({'Perturbed (magenta)', 'Unperturbed (blue)'}, 'Location', 'northeast');
 
 % Create a dynamic filename based on A and omega
-gifFile = sprintf('projectpart1_A%.2f_omega%.2f.gif', A, omega);
+gifFile = sprintf('projectpart1_A%.4f_omega%.4f.gif', A, omega);
 
 % Initial wavefunction for both perturbed and unperturbed systems
 psi_pert = psi_0;    % Perturbed system starts with psi_0
 psi_unpert = psi_0;  % Unperturbed system starts with psi_0
 
 for m = 1:M
+    
     % Time-dependent perturbation V(t) = A * sin(x) * cos(omega * t)
     f_t = cos(omega* m * dt); %time dependent perturbation
     V_pert = A * sin(X) * f_t; %total perturbation
@@ -95,8 +97,12 @@ for m = 1:M
     addpoints(h2, X(1:N), abs(psi_unpert(1:N)).^2);  % Unperturbed
 
     % Update the title with the values of A and omega
-    title(sprintf('With (magenta) and Without (blue) Perturbation | A = %.2f, \\omega = %.2f', A, omega));
+    title(sprintf('With and Without Perturbation | A = %.4f, \\omega = %.4f', A, omega));
     
+    % Add a time label to the plot
+    time_label = sprintf('Time = %.4f', m * dt);
+    text_handle = text(a + 0.1 * (b - a), 0.075, time_label, 'FontSize', 12, 'Color', 'k');
+
     % Capture the plot as an image
     frame = getframe(gcf);
     im = frame2im(frame);
@@ -104,13 +110,15 @@ for m = 1:M
     
     % Write to the GIF file
     if m == 1
-        imwrite(imind, cm, gifFile, 'gif', 'Loopcount', inf, 'DelayTime', 0.05);
+        imwrite(imind, cm, gifFile, 'gif', 'Loopcount', inf, 'DelayTime', 0.005);
     else
-        imwrite(imind, cm, gifFile, 'gif', 'WriteMode', 'append', 'DelayTime', 0.05);
+        imwrite(imind, cm, gifFile, 'gif', 'WriteMode', 'append', 'DelayTime', 0.005);
     end
 
-    pause(0.05);
+    pause(0.005);
     drawnow;
+    % Remove the time label after capturing the frame
+    delete(text_handle);
 end
 %psi=psi_0; %final state updated 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
